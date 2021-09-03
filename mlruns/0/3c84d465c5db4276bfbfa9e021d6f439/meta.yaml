@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/salvatore/Documents/mlflow-docker/mlruns/0/3c84d465c5db4276bfbfa9e021d6f439/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 3c84d465c5db4276bfbfa9e021d6f439
+run_uuid: 3c84d465c5db4276bfbfa9e021d6f439
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1630645363775
+status: 1
+tags: []
+user_id: salvatore
