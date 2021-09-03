@@ -14,21 +14,36 @@ services:
       - A
     volumes:
       - ./s3:/date
+
+#  db:
+#      restart: always
+#      image: mysql/mysql-server:5.7.28
+#      container_name: mlflow_db
+#      expose:
+#          - "3306"
+#      environment:
+#          - MYSQL_DATABASE=${MYSQL_DATABASE}
+#          - MYSQL_USER=${MYSQL_USER}
+#          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#      volumes:
+#          - ./dbdata:/var/lib/mysql
+#      networks:
+#            - A
   db:
-      restart: always
-      image: mysql/mysql-server:5.7.28
-      container_name: mlflow_db
-      expose:
-          - "3306"
-      environment:
-          - MYSQL_DATABASE=${MYSQL_DATABASE}
-          - MYSQL_USER=${MYSQL_USER}
-          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      volumes:
-          - ./dbdata:/var/lib/mysql
-      networks:
-            - A
+    image: postgres:12.2
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    user: "501:20"  # Replace the values of "id -u" and "id -g"
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - ./dbdata:/var/lib/postgresql/data
+    networks:
+      - A
   mlflow:
       container_name: tracker_mlflow
       image: tracker_ml
@@ -44,7 +59,8 @@ services:
           - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
       networks:
           - A
-      entrypoint: ./wait-for-it.sh db:3306 -t 90 -- mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ -h 0.0.0.0
+      #entrypoint: ./wait-for-it.sh db:3306 -t 90 -- mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ -h 0.0.0.0
+      entrypoint: ./wait-for-it.sh db:5432 -t 90 -- mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ -h 0.0.0.0
 networks:
     A:
         driver: bridge
