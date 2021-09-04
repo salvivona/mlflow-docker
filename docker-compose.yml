@@ -15,21 +15,6 @@ services:
     volumes:
       - ./s3:/date
 
-#  db:
-#      restart: always
-#      image: mysql/mysql-server:5.7.28
-#      container_name: mlflow_db
-#      expose:
-#          - "3306"
-#      environment:
-#          - MYSQL_DATABASE=${MYSQL_DATABASE}
-#          - MYSQL_USER=${MYSQL_USER}
-#          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-#          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-#      volumes:
-#          - ./dbdata:/var/lib/mysql
-#      networks:
-#            - A
   db:
     image: postgres:12.2
     expose:
